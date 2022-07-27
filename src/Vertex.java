@@ -1,6 +1,7 @@
 public class Vertex {
     private int label;
 
+    
     public Vertex(int label){
         this.label = label;
     }
@@ -16,6 +17,8 @@ public class Vertex {
     public String toString(){
         return Integer.toString(this.label);
     }
-
+    
     public int getLabel(){ return this.label; }
+    
+    public void setLabel(int label) { this.label = label; }
 }

@@ -4,11 +4,13 @@ public class Edge{
     private Vertex vertex2;
     private int length;
     private boolean arrow;
-
+    
+    
     public Edge(Vertex a, Vertex b){
         this.vertex1 = a;
         this.vertex2 = b;
         this.length = 1;
+        this.arrow = false;
     }
     
     public Edge(int label, Vertex a, Vertex b){
@@ -16,15 +18,22 @@ public class Edge{
         this.vertex1 = a;
         this.vertex2 = b;
         this.length = 1;
+        this.arrow = false;
     }
-
+    
     public Edge(int label, Vertex a, Vertex b, int length){
         this.label = label;
         this.vertex1 = a;
         this.vertex2 = b;
         this.length = length;
+        this.arrow = false;
     }
+    
+    public Edge Reverse(){ return (Edge) new Edge(this.label, this.vertex2, this.vertex1); }
 
+    public boolean isArrow() { return arrow; }
+
+    
     public boolean isReverseWith(Edge otherEdge){
         return (this.equalsVerifyInvertCase(otherEdge))? true : false;
     } 
@@ -60,7 +69,7 @@ public class Edge{
     public Vertex getVertex2() { return vertex2; }
 
     public void setVertex2(Vertex vertex2) { this.vertex2 = vertex2; }
-
+    
     public int getLength() { return length; }
     
     public void setLength(int length) { this.length = length; }
@@ -68,4 +77,6 @@ public class Edge{
     public int getLabel() { return label; }
 
     public void setLabel(int label) { this.label = label; }
+    
+    public void setArrow(boolean arrow) { this.arrow = arrow; }
 }
