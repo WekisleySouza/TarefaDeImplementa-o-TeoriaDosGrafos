@@ -18,6 +18,24 @@ public class Graph {
         this.verifyEdges();
     }
 
+    public void info(){
+        System.out.println("É um grafo misto: " + this.isMixedGraph());
+        System.out.println("É um grafo simples: " + this.isSimpleGraph());
+        System.out.println("É um grafo direcionado: " + this.isDirectedGraph());
+    }
+
+    private boolean isMixedGraph(){
+        return (!this.isDirectedGraph() && !this.isSimpleGraph())? true : false;
+    }
+
+    private boolean isDirectedGraph(){
+        return (this.edges.size() == this.directedEdges.size())? true : false;
+    }
+
+    private boolean isSimpleGraph(){
+        return (this.edges.size() == this.notDirectedEdges.size())? true : false;
+    }
+
     private void verifyEdges(){
         for(Edge edge : this.edges){
             this.verifyEdge(edge);

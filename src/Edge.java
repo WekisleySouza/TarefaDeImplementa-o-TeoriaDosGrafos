@@ -3,14 +3,11 @@ public class Edge{
     private Vertex vertex1;
     private Vertex vertex2;
     private int length;
-    private boolean arrow;
-    
     
     public Edge(Vertex a, Vertex b){
         this.vertex1 = a;
         this.vertex2 = b;
         this.length = 1;
-        this.arrow = false;
     }
     
     public Edge(int label, Vertex a, Vertex b){
@@ -18,7 +15,6 @@ public class Edge{
         this.vertex1 = a;
         this.vertex2 = b;
         this.length = 1;
-        this.arrow = false;
     }
     
     public Edge(int label, Vertex a, Vertex b, int length){
@@ -26,13 +22,15 @@ public class Edge{
         this.vertex1 = a;
         this.vertex2 = b;
         this.length = length;
-        this.arrow = false;
     }
     
-    public Edge Reverse(){ return (Edge) new Edge(this.label, this.vertex2, this.vertex1); }
+    public boolean isLoop() {
+        return (vertex1 == vertex2)? true : false;
+    }
 
-    public boolean isArrow() { return arrow; }
-
+    public Edge Reverse(){
+        return (Edge) new Edge(this.label, this.vertex2, this.vertex1);
+    }
     
     public boolean isReverseWith(Edge otherEdge){
         return (this.equalsVerifyInvertCase(otherEdge))? true : false;
@@ -77,6 +75,4 @@ public class Edge{
     public int getLabel() { return label; }
 
     public void setLabel(int label) { this.label = label; }
-    
-    public void setArrow(boolean arrow) { this.arrow = arrow; }
 }
