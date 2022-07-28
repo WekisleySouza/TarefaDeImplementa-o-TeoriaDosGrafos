@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Vertex {
     private int label;
 
@@ -9,6 +11,15 @@ public class Vertex {
     public boolean equals(Vertex otherVertex){
         if(this.label == otherVertex.getLabel()){
             return true;
+        }
+        return false;
+    }
+
+    public boolean existsInList(List<Vertex> vertices){
+        for(Vertex nowVertex : vertices){
+            if(this.equals(nowVertex)){
+                return true;
+            }
         }
         return false;
     }

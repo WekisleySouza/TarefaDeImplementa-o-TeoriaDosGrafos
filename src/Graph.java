@@ -15,13 +15,41 @@ public class Graph {
         this.directedEdges = new ArrayList<Edge>();
         this.vertices = new ArrayList<Vertex>();
         this.addEdges(this.path);
-        this.verifyEdges();
+        this.separateEdgesByType();
+        addVertices();
+    }
+
+    private void addVertices(){
+        for(Edge edge : this.edges){
+            addVerticesFromEdge(edge);
+        }
+    } 
+
+    private void addVerticesFromEdge(Edge edge){
+        addVertexFromEdgeIfNotExists(edge.getVertex1());
+        addVertexFromEdgeIfNotExists(edge.getVertex2());
+    }
+
+    private void addVertexFromEdgeIfNotExists(Vertex vertex){
+        if(!vertex.existsInList(this.vertices)){
+            this.vertices.add(vertex);
+        }
     }
 
     public void info(){
-        System.out.println("É um grafo misto: " + this.isMixedGraph());
-        System.out.println("É um grafo simples: " + this.isSimpleGraph());
-        System.out.println("É um grafo direcionado: " + this.isDirectedGraph());
+        printTypeOfGraph();
+        System.out.println("É um grafo de ordem " + this.vertices.size() + ".");
+        System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
+    }
+
+    private void printTypeOfGraph(){
+        if(isDirectedGraph()){
+            System.out.println("É um grafo direcionado!");
+        }else if(isSimpleGraph()){
+            System.out.println("É um grafo simples!");
+        }else if(isMixedGraph()){
+            System.out.println("É um grafo misto!");
+        }
     }
 
     private boolean isMixedGraph(){
@@ -36,28 +64,19 @@ public class Graph {
         return (this.edges.size() == this.notDirectedEdges.size())? true : false;
     }
 
-    private void verifyEdges(){
+    private void separateEdgesByType(){
         for(Edge edge : this.edges){
-            this.verifyEdge(edge);
+            this.addEdgeByType(edge);
         }
     }
 
-    private void verifyEdge(Edge edge){
-        if(this.edgesContainsReverseEdge(edge, this.edges)){
+    private void addEdgeByType(Edge edge){
+        if(edge.reverseIsInList(this.edges)){
             this.notDirectedEdges.add(edge);
 
-        }else if(!this.edgesContainsReverseEdge(edge, this.notDirectedEdges)){
+        }else if(!edge.reverseIsInList(this.notDirectedEdges)){
             this.directedEdges.add(edge);
         }
-    }
-
-    private boolean edgesContainsReverseEdge(Edge edge, List<Edge> edgesList){
-        for(Edge nowEdge : edgesList){
-            if(edge.isReverseWith(nowEdge)){
-                return true;
-            }
-        }
-        return false;
     }
 
     private void addEdges(String path){

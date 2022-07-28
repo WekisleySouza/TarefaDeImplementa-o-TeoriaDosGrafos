@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Edge{
     private int label;
     private Vertex vertex1;
@@ -52,6 +54,15 @@ public class Edge{
         boolean vertex2EqualsOtherVertex1 = this.vertex2.equals(otherEdge.getVertex1());
         
         return (vertex1EqualsOtherVertex2 && vertex2EqualsOtherVertex1)? true : false;
+    }
+
+    public boolean reverseIsInList(List<Edge> edgesList){
+        for(Edge nowEdge : edgesList){
+            if(this.isReverseWith(nowEdge)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
