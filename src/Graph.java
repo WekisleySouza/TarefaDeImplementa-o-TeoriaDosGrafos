@@ -17,6 +17,69 @@ public class Graph {
         this.addEdges(this.path);
         this.separateEdgesByType();
         addVertices();
+        updateArrowEdgesStatus();
+        updateVertexConnections();
+    }
+
+    private void updateVertexConnections(){
+        for(Edge edge : this.directedEdges){
+            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
+            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
+        }
+        for(Edge edge : this.notDirectedEdges){
+            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
+            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
+        }
+    }
+    
+    public void info(){
+        System.out.println("======================================================================");
+        System.out.println("================================= Grafo ==============================");
+        System.out.println("======================================================================");
+        printTypeOfGraph();
+        printIsRegular();
+        System.out.println("É um grafo de ordem " + this.getOrder() + ".");
+        System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
+        printVerticesDegree();
+        System.out.println("======================================================================");
+    }
+    
+    private void printTypeOfGraph(){
+        if(isDirectedGraph()){
+            System.out.println("É um grafo direcionado!");
+        }else if(isSimpleGraph()){
+            System.out.println("É um grafo simples!");
+        }else if(isMixedGraph()){
+            System.out.println("É um grafo misto!");
+        }
+    }
+
+    private void printVerticesDegree(){
+        System.out.println("-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/");
+        for(Vertex vertex : this.vertices){
+            System.out.println("Grau do vértice " + vertex.getLabel() + ": " + vertex.getDegree());
+        }
+        System.out.println("-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/");
+    }
+
+    private void printIsRegular(){
+        if(isRegular()){
+            System.out.println("É um grafo regular!");
+        }else{
+            System.out.println("É um grafo irregular!");
+        }
+    }
+
+    private void updatePreviousVertexConnection(int vertexIndex, int edgeLabel){
+        if(vertexIndex != -1){
+            this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
+        }
+    }
+
+    private void updateNextVertexConnection(int vertexIndex, int edgeLabel){
+        if(vertexIndex != -1){
+            this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
+        }
     }
 
     private void addVertices(){
@@ -26,29 +89,13 @@ public class Graph {
     } 
 
     private void addVerticesFromEdge(Edge edge){
-        addVertexFromEdgeIfNotExists(edge.getVertex1());
-        addVertexFromEdgeIfNotExists(edge.getVertex2());
+        addVertexFromEdgeIfNotExists(edge.getPreviousVertex());
+        addVertexFromEdgeIfNotExists(edge.getNextVertex());
     }
 
     private void addVertexFromEdgeIfNotExists(Vertex vertex){
         if(!vertex.existsInList(this.vertices)){
             this.vertices.add(vertex);
-        }
-    }
-
-    public void info(){
-        printTypeOfGraph();
-        System.out.println("É um grafo de ordem " + this.vertices.size() + ".");
-        System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
-    }
-
-    private void printTypeOfGraph(){
-        if(isDirectedGraph()){
-            System.out.println("É um grafo direcionado!");
-        }else if(isSimpleGraph()){
-            System.out.println("É um grafo simples!");
-        }else if(isMixedGraph()){
-            System.out.println("É um grafo misto!");
         }
     }
 
@@ -64,6 +111,22 @@ public class Graph {
         return (this.edges.size() == this.notDirectedEdges.size())? true : false;
     }
 
+    private boolean isRegular(){
+        int vertexConecttions = this.vertices.get(0).getDegree();
+        for(Vertex vertex : this.vertices){
+            if(vertex.getDegree() != vertexConecttions){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void updateArrowEdgesStatus(){
+        for(Edge edge : this.directedEdges){
+            edge.setArrow(true);
+        }
+    }
+
     private void separateEdgesByType(){
         for(Edge edge : this.edges){
             this.addEdgeByType(edge);
@@ -73,7 +136,6 @@ public class Graph {
     private void addEdgeByType(Edge edge){
         if(edge.reverseIsInList(this.edges)){
             this.notDirectedEdges.add(edge);
-
         }else if(!edge.reverseIsInList(this.notDirectedEdges)){
             this.directedEdges.add(edge);
         }
@@ -108,9 +170,9 @@ public class Graph {
     }
     
     // Getters and Setters
-    public List<Edge> getDirectedEdges() { return directedEdges; }
-    
-    public void setDirectedEdges(List<Edge> directedEdges) { this.directedEdges = directedEdges; }
+    public int getOrder(){ return this.vertices.size(); }
+
+    public int getSize(){ return this.notDirectedEdges.size() + this.directedEdges.size(); }
     
     public List<Vertex> getVertices() { return vertices; }
     
@@ -123,6 +185,10 @@ public class Graph {
     public List<Edge> getEdges() { return edges; }
     
     public void setEdges(List<Edge> edges) { this.edges = edges; }
+    
+    public List<Edge> getDirectedEdges() { return directedEdges; }
+        
+    public void setDirectedEdges(List<Edge> directedEdges) { this.directedEdges = directedEdges; }
     
     public List<Edge> getNotDirectedEdges() { return notDirectedEdges; }
     

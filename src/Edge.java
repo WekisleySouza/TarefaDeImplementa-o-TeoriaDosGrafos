@@ -2,36 +2,62 @@ import java.util.List;
 
 public class Edge{
     private int label;
-    private Vertex vertex1;
-    private Vertex vertex2;
+    private Vertex previousVertex;
+    private Vertex nextVertex;
     private int length;
+    private boolean arrow;
     
+    public boolean isArrow() {
+        return arrow;
+    }
+
+    public void setArrow(boolean arrow) {
+        this.arrow = arrow;
+    }
+
     public Edge(Vertex a, Vertex b){
-        this.vertex1 = a;
-        this.vertex2 = b;
+        this.previousVertex = a;
+        this.nextVertex = b;
         this.length = 1;
     }
     
     public Edge(int label, Vertex a, Vertex b){
         this.label = label;
-        this.vertex1 = a;
-        this.vertex2 = b;
+        this.previousVertex = a;
+        this.nextVertex = b;
         this.length = 1;
     }
     
     public Edge(int label, Vertex a, Vertex b, int length){
         this.label = label;
-        this.vertex1 = a;
-        this.vertex2 = b;
+        this.previousVertex = a;
+        this.nextVertex = b;
         this.length = length;
+    }
+
+    public int previousVertexIndexInList(List<Vertex> vertices){
+        return (int) getVertexIndexByLabel(this.getPreviousVertexLabel(), vertices);
+    }
+
+    public int nextVertexIndexInList(List<Vertex> vertices){
+        return (int) getVertexIndexByLabel(this.getNextVertexLabel(), vertices);
+    }
+
+    private int getVertexIndexByLabel(int label, List<Vertex> vertices){
+        for(int i = 0; i < vertices.size(); i++){
+            if(vertices.get(i).getLabel() == label){
+                return i;
+            }
+        }
+        return -1;
     }
     
     public boolean isLoop() {
-        return (vertex1 == vertex2)? true : false;
+        return (previousVertex == nextVertex)? true : false;
     }
 
     public Edge Reverse(){
-        return (Edge) new Edge(this.label, this.vertex2, this.vertex1);
+        return (Edge) new Edge(this.label, this.nextVertex, this.previousVertex);
     }
     
     public boolean isReverseWith(Edge otherEdge){
@@ -43,15 +69,15 @@ public class Edge{
     }
 
     private boolean equalsVerifyOrderCase(Edge otherEdge){
-        boolean vertex1EqualsOtherVertex1 = this.vertex1.equals(otherEdge.getVertex1());
-        boolean vertex2EqualsOtherVertex2 = this.vertex2.equals(otherEdge.getVertex2());
+        boolean vertex1EqualsOtherVertex1 = this.previousVertex.equals(otherEdge.getPreviousVertex());
+        boolean vertex2EqualsOtherVertex2 = this.nextVertex.equals(otherEdge.getNextVertex());
         
         return (vertex1EqualsOtherVertex1 && vertex2EqualsOtherVertex2)? true : false;
     }
 
     private boolean equalsVerifyInvertCase(Edge otherEdge){
-        boolean vertex1EqualsOtherVertex2 = this.vertex1.equals(otherEdge.getVertex2());
-        boolean vertex2EqualsOtherVertex1 = this.vertex2.equals(otherEdge.getVertex1());
+        boolean vertex1EqualsOtherVertex2 = this.previousVertex.equals(otherEdge.getNextVertex());
+        boolean vertex2EqualsOtherVertex1 = this.nextVertex.equals(otherEdge.getPreviousVertex());
         
         return (vertex1EqualsOtherVertex2 && vertex2EqualsOtherVertex1)? true : false;
     }
@@ -71,13 +97,17 @@ public class Edge{
     }
     
     //GETTERS AND SETTERS:
-    public Vertex getVertex1() { return vertex1; }
+    public Vertex getPreviousVertex() { return previousVertex; }
 
-    public void setVertex1(Vertex vertex1) { this.vertex1 = vertex1; }
+    public void setPreviousVertex(Vertex vertex) { this.previousVertex = vertex; }
 
-    public Vertex getVertex2() { return vertex2; }
+    public Vertex getNextVertex() { return nextVertex; }
 
-    public void setVertex2(Vertex vertex2) { this.vertex2 = vertex2; }
+    public void setNextVertex(Vertex vertex) { this.nextVertex = vertex; }
+
+    public int getNextVertexLabel(){ return this.nextVertex.getLabel(); }
+
+    public int getPreviousVertexLabel(){ return this.previousVertex.getLabel(); }
     
     public int getLength() { return length; }
     
