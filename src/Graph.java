@@ -34,6 +34,7 @@ public class Graph {
         printTypeOfGraph();
         printIsRegular();
         printIsPair();
+        printCompleteGraph();
         System.out.println("É um grafo de ordem " + this.getOrder() + ".");
         System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
         printLeavesVertices();
@@ -87,6 +88,15 @@ public class Graph {
         }
     }
 
+    private void printCompleteGraph(){
+
+        if(isCompleteGraph()){
+            System.out.println("É um grafo completo!");
+        }else{
+            System.out.println("Não é um grafo completo!");
+        }
+    }
+
     private void updatePreviousVertexConnection(int vertexIndex, int edgeLabel){
         if(vertexIndex != -1){
             this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
@@ -133,6 +143,11 @@ public class Graph {
         if(!vertex.existsInList(this.vertices)){
             this.vertices.add(vertex);
         }
+    }
+
+    private boolean isCompleteGraph(){
+        int edgesNumberForComplete = (this.vertices.size() * (this.vertices.size() - 1)) / 2;
+        return (edgesNumberForComplete == this.edgesNumber())? true : false;
     }
 
     private boolean isMixedGraph(){
@@ -207,6 +222,10 @@ public class Graph {
 
     private int generateEdgeLabel(){
         return (int) this.edges.size();
+    }
+
+    public int edgesNumber(){
+        return (int) this.directedEdges.size() + this.notDirectedEdges.size();
     }
     
     @Override

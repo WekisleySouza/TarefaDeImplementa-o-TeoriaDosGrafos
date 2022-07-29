@@ -19,7 +19,6 @@ To do:
     - Calcular nulidade de grafo.
     - Calcular número ciclomático.
     - Verificar se grafo é bipartido.
-    - Verificar se grafo é completo.
     - Verificar se grafo é um torneio.
     - Verificar se grafo é planar.
     - Verificar número de cruzamento de arestas.
@@ -30,6 +29,7 @@ Doing:
 
 Done:
 
+    - Verificar se grafo é completo.
     - Verificar de grafo é par.
     - Implementar estrutura de um grafo.
     - Encontrar grau de vértice.
