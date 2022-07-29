@@ -10,10 +10,8 @@ To do:
     - Encontrar raio de G.
     - Encontrar diametro de G.
     - Encontrar centro de G.
-    - Verificar de grafo é par.
     - Verificar se grafo é conexo.
     - Verificar se é grafo árvore.
-    - Verificar quais vértices são folhas.
     - Verificar se existem vértices extremos.
     - Verificar conexidade em arestas.
     - Verificar conexidade em vértices.
@@ -32,9 +30,11 @@ Doing:
 
 Done:
 
+    - Verificar de grafo é par.
     - Implementar estrutura de um grafo.
     - Encontrar grau de vértice.
     - Verificar se grafo é direcionado.
     - Verificar ordem de grafo.
     - Verificar tamanho de grafo.
     - Verificar se grafo é regular.
+    - Verificar quais vértices são folhas.

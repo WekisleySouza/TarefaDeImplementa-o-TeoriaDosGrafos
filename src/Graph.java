@@ -6,6 +6,8 @@ public class Graph {
     private List<Edge> notDirectedEdges;
     private List<Edge> directedEdges;
     private List<Vertex> vertices;
+    private List<Vertex> leaves;
+    private List<Way> ways;
     private String path;
     
     public Graph(String path){
@@ -14,23 +16,16 @@ public class Graph {
         this.notDirectedEdges = new ArrayList<Edge>();
         this.directedEdges = new ArrayList<Edge>();
         this.vertices = new ArrayList<Vertex>();
+        this.ways = new ArrayList<Way>();
+        this.leaves = new ArrayList<Vertex>();
         this.addEdges(this.path);
         this.separateEdgesByType();
         addVertices();
         updateArrowEdgesStatus();
         updateVertexConnections();
+        updateLeafVertices();
     }
 
-    private void updateVertexConnections(){
-        for(Edge edge : this.directedEdges){
-            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
-            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
-        }
-        for(Edge edge : this.notDirectedEdges){
-            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
-            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
-        }
-    }
     
     public void info(){
         System.out.println("======================================================================");
@@ -38,8 +33,10 @@ public class Graph {
         System.out.println("======================================================================");
         printTypeOfGraph();
         printIsRegular();
+        printIsPair();
         System.out.println("É um grafo de ordem " + this.getOrder() + ".");
         System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
+        printLeavesVertices();
         printVerticesDegree();
         System.out.println("======================================================================");
     }
@@ -70,6 +67,26 @@ public class Graph {
         }
     }
 
+    private void printIsPair(){
+        if(isPair()){
+            System.out.println("É um grafo par!");
+        }else{
+            System.out.println("Não é um grafo par!");
+        }
+    }
+
+    private void printLeavesVertices(){
+        System.out.print("Folhas do grafo: ");
+        for(int i = 0; i < this.leaves.size(); i++){
+            System.out.print(this.leaves.get(i));
+            if(i != this.leaves.size() - 1){
+                System.out.print(", ");
+            }else{
+                System.out.println(".");
+            }
+        }
+    }
+
     private void updatePreviousVertexConnection(int vertexIndex, int edgeLabel){
         if(vertexIndex != -1){
             this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
@@ -81,13 +98,32 @@ public class Graph {
             this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
         }
     }
+    
+    private void updateVertexConnections(){
+        for(Edge edge : this.directedEdges){
+            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
+            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
+        }
+        for(Edge edge : this.notDirectedEdges){
+            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
+            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
+        }
+    }
 
+    private void updateLeafVertices(){
+        for(Vertex vertex : this.vertices){
+            if(vertex.isLeaf()){
+                this.leaves.add(vertex);
+            }
+        }
+    }
+    
     private void addVertices(){
         for(Edge edge : this.edges){
             addVerticesFromEdge(edge);
         }
     } 
-
+    
     private void addVerticesFromEdge(Edge edge){
         addVertexFromEdgeIfNotExists(edge.getPreviousVertex());
         addVertexFromEdgeIfNotExists(edge.getNextVertex());
@@ -109,6 +145,15 @@ public class Graph {
 
     private boolean isSimpleGraph(){
         return (this.edges.size() == this.notDirectedEdges.size())? true : false;
+    }
+
+    private boolean isPair(){
+        for(Vertex vertex : this.vertices){
+            if(vertex.getDegree() % 2 != 0){
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isRegular(){

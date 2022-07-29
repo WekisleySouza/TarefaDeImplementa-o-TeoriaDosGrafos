@@ -27,6 +27,18 @@ public class Vertex {
         }
         return false;
     }
+
+    private int previousEdgeQuantity(){
+        return (int) this.previousEdgeLabel.size();
+    }
+
+    private int nextEdgeQuantity(){
+        return (int) this.nextEdgeLabel.size();
+    }
+
+    public boolean isLeaf(){
+        return (nextEdgeQuantity() + previousEdgeQuantity() == 1)? true : false;    
+    }
     
     @Override
     public String toString(){
