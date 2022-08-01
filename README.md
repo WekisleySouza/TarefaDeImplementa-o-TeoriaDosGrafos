@@ -1,5 +1,6 @@
 To do:
 
+    - Verificar idéia dos vértices extremos.
     - Implementar parte da árvore geradora mínima.
     - Implementar o limite de grau dos vértices em cima da árvore geradora mínima.
     - Implementar matriz de distâncias para achar a menor distância.
@@ -12,7 +13,6 @@ To do:
     - Encontrar centro de G.
     - Verificar se grafo é conexo.
     - Verificar se é grafo árvore.
-    - Verificar se existem vértices extremos.
     - Verificar conexidade em arestas.
     - Verificar conexidade em vértices.
     - Ver se grafo é k-conexo.
@@ -20,15 +20,19 @@ To do:
     - Calcular número ciclomático.
     - Verificar se grafo é bipartido.
     - Verificar se grafo é um torneio.
-    - Verificar se grafo é planar.
     - Verificar número de cruzamento de arestas.
 
 Doing:
 
+    - Implementando idéia de percorrer um caminho.
     - Implementar identificação dos conceitos básicos.
 
 Done:
 
+    - Implementar método que retorna passos.
+    - Fazer vértices guardarem arestas adjascentes.
+    - Verificar se grafo é planar.
+    - Verificar se existem vértices extremos.
     - Verificar se grafo é completo.
     - Verificar de grafo é par.
     - Implementar estrutura de um grafo.

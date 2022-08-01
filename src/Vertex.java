@@ -56,7 +56,7 @@ public class Vertex {
     
     public List<Integer> getPreviousEdgeLabel() { return previousEdgeLabel; }
     
-    public void setPreviousEdgeLabel(List<Integer> previousEdgeLabel) { this.previousEdgeLabel = previousEdgeLabel; }
+    public void PreviousEdgeLabel(List<Integer> previousEdgeLabel) { this.previousEdgeLabel = previousEdgeLabel; }
 
     public void addPreviousEdgeLabel(int label){ this.previousEdgeLabel.add(label); }
 

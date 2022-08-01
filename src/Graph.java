@@ -7,8 +7,8 @@ public class Graph {
     private List<Edge> directedEdges;
     private List<Vertex> vertices;
     private List<Vertex> leaves;
-    private List<Way> ways;
     private String path;
+    private List<Way> ways;
     
     public Graph(String path){
         this.path = path;
@@ -16,8 +16,8 @@ public class Graph {
         this.notDirectedEdges = new ArrayList<Edge>();
         this.directedEdges = new ArrayList<Edge>();
         this.vertices = new ArrayList<Vertex>();
-        this.ways = new ArrayList<Way>();
         this.leaves = new ArrayList<Vertex>();
+        this.ways = new ArrayList<Way>();
         this.addEdges(this.path);
         this.separateEdgesByType();
         addVertices();
@@ -25,7 +25,6 @@ public class Graph {
         updateVertexConnections();
         updateLeafVertices();
     }
-
     
     public void info(){
         System.out.println("======================================================================");
@@ -35,11 +34,14 @@ public class Graph {
         printIsRegular();
         printIsPair();
         printCompleteGraph();
+        printExtremeVertices();
+        printIsPlanar();
         System.out.println("É um grafo de ordem " + this.getOrder() + ".");
         System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
         printLeavesVertices();
         printVerticesDegree();
         System.out.println("======================================================================");
+        System.out.println(getStepsFrom(this.vertices.get(1)));
     }
     
     private void printTypeOfGraph(){
@@ -77,15 +79,31 @@ public class Graph {
     }
 
     private void printLeavesVertices(){
+        if(this.leaves.size() != 0){
+            printLeaves();
+        }
+    }
+
+    private void printLeaves(){
         System.out.print("Folhas do grafo: ");
         for(int i = 0; i < this.leaves.size(); i++){
-            System.out.print(this.leaves.get(i));
-            if(i != this.leaves.size() - 1){
-                System.out.print(", ");
-            }else{
-                System.out.println(".");
-            }
+            System.out.print(this.leaves.get(i) + verifiedStringToSeparateLeaves(i));
         }
+    }
+
+    private void printIsPlanar(){
+        if(this.isPlanar()){
+            System.out.println("É um grafo planar!");
+        }else{
+            System.out.println("Não é um grafo planar!");
+        }
+    }
+
+    private String verifiedStringToSeparateLeaves(int index){
+        if(index != this.leaves.size() - 1){
+            return ", ";
+        }
+        return ".\n";
     }
 
     private void printCompleteGraph(){
@@ -97,6 +115,14 @@ public class Graph {
         }
     }
 
+    private void printExtremeVertices(){
+        if(extremeVerticesExists()){
+            System.out.println("Existem vértices extremos!");
+        }else{
+            System.out.println("Não existem vértices extremos!");
+        }
+    }
+
     private void updatePreviousVertexConnection(int vertexIndex, int edgeLabel){
         if(vertexIndex != -1){
             this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
@@ -105,18 +131,19 @@ public class Graph {
 
     private void updateNextVertexConnection(int vertexIndex, int edgeLabel){
         if(vertexIndex != -1){
-            this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
+            this.vertices.get(vertexIndex).addNextEdgeLabel(edgeLabel);
         }
     }
     
     private void updateVertexConnections(){
-        for(Edge edge : this.directedEdges){
-            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
-            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
-        }
-        for(Edge edge : this.notDirectedEdges){
-            updatePreviousVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
-            updateNextVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
+        updateVertexConnectionFrom(this.notDirectedEdges);
+        updateVertexConnectionFrom(this.directedEdges);
+    }
+
+    private void updateVertexConnectionFrom(List<Edge> edges){
+        for(Edge edge : edges){
+            updatePreviousVertexConnection(edge.nextVertexIndexInList(this.vertices), edge.getLabel());
+            updateNextVertexConnection(edge.previousVertexIndexInList(this.vertices), edge.getLabel());
         }
     }
 
@@ -127,7 +154,40 @@ public class Graph {
             }
         }
     }
+
+    private List<Way> getStepsFrom(Vertex actualVertex){
+        List<Way> ways = new ArrayList<Way>();
+        List<Integer> edgeLabel = actualVertex.getNextEdgeLabel();
+        for(int label : edgeLabel){
+            ways.add(newWay(actualVertex, label));
+        }
+        return ways;
+    }
+
+    private Way newWay(Vertex actualVertex, int label){
+        Edge edge = findEdge(label);
+        Vertex nextVertex = findVertex(edge.getNextVertexLabel());
+        return new Way(actualVertex, nextVertex, edge.getLength());
+    }
     
+    private Edge findEdge(int edgeLabel){
+        for(Edge edge : this.edges){
+            if(edge.getLabel() == edgeLabel){
+                return edge;
+            }
+        }
+        return null;
+    }
+    
+    private Vertex findVertex(int vertexLabel){
+        for(Vertex vertex : this.vertices){
+            if(vertex.getLabel() == vertexLabel){
+                return vertex;
+            }
+        }
+        return null;
+    }
+
     private void addVertices(){
         for(Edge edge : this.edges){
             addVerticesFromEdge(edge);
@@ -135,14 +195,18 @@ public class Graph {
     } 
     
     private void addVerticesFromEdge(Edge edge){
-        addVertexFromEdgeIfNotExists(edge.getPreviousVertex());
-        addVertexFromEdgeIfNotExists(edge.getNextVertex());
+        addVertexIfNotExistsFrom(edge.getPreviousVertex());
+        addVertexIfNotExistsFrom(edge.getNextVertex());
     }
 
-    private void addVertexFromEdgeIfNotExists(Vertex vertex){
+    private void addVertexIfNotExistsFrom(Vertex vertex){
         if(!vertex.existsInList(this.vertices)){
             this.vertices.add(vertex);
         }
+    }
+
+    private boolean extremeVerticesExists(){
+        return (this.leaves.size() == 2)? true : false;
     }
 
     private boolean isCompleteGraph(){
@@ -179,6 +243,11 @@ public class Graph {
             }
         }
         return true;
+    }
+
+    private boolean isPlanar(){
+        int maxEdgesToPLanar = (3 * verticesNumber()) - 6;
+        return (this.edgesNumber() <= maxEdgesToPLanar)? true : false;
     }
 
     private void updateArrowEdgesStatus(){
@@ -222,6 +291,10 @@ public class Graph {
 
     private int generateEdgeLabel(){
         return (int) this.edges.size();
+    }
+
+    public int verticesNumber(){
+        return (int) this.vertices.size();
     }
 
     public int edgesNumber(){
