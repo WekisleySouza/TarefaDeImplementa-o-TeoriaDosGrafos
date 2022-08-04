@@ -1,8 +1,9 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        Graph graph = new Graph("graphs//Graph_1.csv");
+        Graph graph = new Graph("graphs//Graph_Way.csv");
         // IncidencyMatrix teste = new IncidencyMatrix(graph);
         // System.out.println(teste.getMatrix());
-        graph.info();
+        graph.test();
+
     }
 }

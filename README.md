@@ -1,6 +1,5 @@
 To do:
 
-    - Verificar idéia dos vértices extremos.
     - Implementar parte da árvore geradora mínima.
     - Implementar o limite de grau dos vértices em cima da árvore geradora mínima.
     - Implementar matriz de distâncias para achar a menor distância.
@@ -24,7 +23,7 @@ To do:
 
 Doing:
 
-    - Implementando idéia de percorrer um caminho.
+    - Implementando idéia de percorrer um caminho. (Aplicar para percorrer até o fim)
     - Implementar identificação dos conceitos básicos.
 
 Done:

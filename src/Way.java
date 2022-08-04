@@ -7,15 +7,22 @@ public class Way {
     Vertex endVertex;
     int length;
     
+    public Way(Way otherWay){
+        this.way = new ArrayList<Integer>(otherWay.getWay());
+        this.beginVertex = otherWay.getBeginVertex();
+        this.endVertex = otherWay.getEndVertex();
+        this.length = otherWay.getLength();
+    }
+
     public Way(Vertex begin, Vertex end, int lenght){
         this.way = new ArrayList<Integer>();
         this.beginVertex = begin;
-        this.endVertex = end;
+        if(stepIsValid(end)){ this.endVertex = end; }
         this.way.add(begin.getLabel());
         this.way.add(end.getLabel());
         this.length = 0;
     }
-
+    
     @Override
     public String toString(){
         String way = "( ";
@@ -25,16 +32,29 @@ public class Way {
         return way;
     }
 
+    public boolean contains(int vertexLabel){
+        return (way.contains(vertexLabel))? true : false;
+    }
+
     private String verifyToAddString(int index){
         return (index != this.way.size() - 1)? " --> " : " )";
     }
 
-    public void addStep(Vertex destin, int length){
-        if(stepIsValid(destin)){
-            updateWay(destin, length);
-        }else{
-            System.out.println("Passo inválido!");
+    public void joinWay(Way otherWay, int otherLength){
+        for(int vertex : otherWay.getWay()){
+            verifyToJoin(vertex);
         }
+        this.length += otherLength;
+    }
+
+    private void verifyToJoin(int vertex){
+        if(!this.way.contains(vertex)){
+            this.way.add(vertex);
+        }
+    }
+    
+    public void addStep(Vertex destin, int length){
+        updateWay(destin, length);
     }
 
     private void updateWay(Vertex destin, int length){
@@ -61,10 +81,26 @@ public class Way {
     }
     
     public int getLength() {
-        return length;
+        return this.length;
     }
     
     public void setLength(int length) {
         this.length = length;
+    }
+    
+    public Vertex getEndVertex() {
+        return endVertex;
+    }
+    
+    public void setEndVertex(Vertex endVertex) {
+        this.endVertex = endVertex;
+    }
+    
+    public Vertex getBeginVertex() {
+        return beginVertex;
+    }
+
+    public void setBeginVertex(Vertex beginVertex) {
+        this.beginVertex = beginVertex;
     }
 }

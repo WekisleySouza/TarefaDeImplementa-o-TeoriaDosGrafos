@@ -41,7 +41,6 @@ public class Graph {
         printLeavesVertices();
         printVerticesDegree();
         System.out.println("======================================================================");
-        System.out.println(getStepsFrom(this.vertices.get(1)));
     }
     
     private void printTypeOfGraph(){
@@ -153,6 +152,42 @@ public class Graph {
                 this.leaves.add(vertex);
             }
         }
+    }
+
+    public void test(){
+        System.out.println(searchWays(this.vertices.get(0), this.vertices.get(4)));
+    }
+
+    private List<Way> searchWays(Vertex beginVertex, Vertex endVertex){
+        List<Way> ways = new ArrayList<Way>(getStepsFrom(beginVertex));
+        List<Way> possibleWays = new ArrayList<Way>();
+        for(Way way : ways){
+            List<Way> possibleSteps = getStepsFrom(way.getEndVertex());
+            for(Way possibleStep : possibleSteps){
+                Way actualWay = new Way(way);
+                if(stepIsValid(way, possibleStep, endVertex)){
+                    actualWay.addStep(possibleStep.getEndVertex(), possibleStep.getLength());
+                    possibleWays.add(actualWay);
+                }
+            }
+        }
+        return possibleWays;
+    }
+
+    private boolean stepIsValid(Way actualWay, Way possibleStep, Vertex endVertex){
+        return (!wayContains(actualWay, possibleStep) && stepIsSequence(actualWay, possibleStep))? true : false;
+    }
+
+    private boolean stepIsSequence(Way way, Way possibleStep){
+        return (possibleStep.getBeginVertex().equals(way.endVertex))? true : false;
+    }
+
+    private boolean wayContains(Way way, Way possibleStep){
+        return (way.getWay().contains(possibleStep.getEndVertex().getLabel()))? true : false;
+    }
+
+    private boolean isPreviousStep(Way possibleStep, Way way){
+        return (possibleStep.getEndVertex().getLabel() != way.getWay().get(way.getWay().size()-2))? true : false;
     }
 
     private List<Way> getStepsFrom(Vertex actualVertex){
