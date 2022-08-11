@@ -1,3 +1,4 @@
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,11 @@ public class Graph {
     private List<Vertex> vertices;
     private List<Vertex> leaves;
     private String path;
-    private List<Way> ways;
+    IncidencyMatrix matrix;
+
+    public Graph(){
+
+    }
     
     public Graph(String path){
         this.path = path;
@@ -17,13 +22,13 @@ public class Graph {
         this.directedEdges = new ArrayList<Edge>();
         this.vertices = new ArrayList<Vertex>();
         this.leaves = new ArrayList<Vertex>();
-        this.ways = new ArrayList<Way>();
         this.addEdges(this.path);
-        this.separateEdgesByType();
+        this.separateEdgesByTypeOf(this.edges);
         addVertices();
         updateArrowEdgesStatus();
         updateVertexConnections();
         updateLeafVertices();
+        this.matrix  = new IncidencyMatrix(this);
     }
     
     public void info(){
@@ -38,9 +43,22 @@ public class Graph {
         printIsPlanar();
         System.out.println("É um grafo de ordem " + this.getOrder() + ".");
         System.out.println("É um grafo de tamanho " + (this.notDirectedEdges.size() + this.directedEdges.size()) + ".");
+        printSpanningTree();
         printLeavesVertices();
         printVerticesDegree();
         System.out.println("======================================================================");
+    }
+
+    private void printSpanningTree(){
+        String text = "Spanning tree edges: ";
+        List<Edge> edges = stringSpanningTreeToEdges();
+        for(int i = 1; i < edges.size(); i++){
+            text += edges.get(i - 1);
+            if(i % 6 == 0){
+                text += "\n";
+            }
+        }
+        System.out.println(text);
     }
     
     private void printTypeOfGraph(){
@@ -97,7 +115,7 @@ public class Graph {
             System.out.println("Não é um grafo planar!");
         }
     }
-
+    
     private String verifiedStringToSeparateLeaves(int index){
         if(index != this.leaves.size() - 1){
             return ", ";
@@ -113,7 +131,7 @@ public class Graph {
             System.out.println("Não é um grafo completo!");
         }
     }
-
+    
     private void printExtremeVertices(){
         if(extremeVerticesExists()){
             System.out.println("Existem vértices extremos!");
@@ -122,6 +140,19 @@ public class Graph {
         }
     }
 
+    private List<Edge> stringSpanningTreeToEdges(){
+        List<Edge> spanningEdges = new ArrayList<Edge>();
+        for(String edge : this.matrix.findSpanningTree()){
+            String[] vertices = edge.split(" - ");
+            spanningEdges.add(new Edge(new Vertex(correctVertex(vertices[0])), new Vertex(correctVertex(vertices[1]))));
+        }
+        return spanningEdges;
+    }
+
+    private int correctVertex(String label){
+        return Integer.parseInt(label) + 1;
+    }
+    
     private void updatePreviousVertexConnection(int vertexIndex, int edgeLabel){
         if(vertexIndex != -1){
             this.vertices.get(vertexIndex).addPreviousEdgeLabel(edgeLabel);
@@ -153,76 +184,7 @@ public class Graph {
             }
         }
     }
-
-    public void test(){
-        System.out.println(searchWays(this.vertices.get(0), this.vertices.get(4)));
-    }
-
-    private List<Way> searchWays(Vertex beginVertex, Vertex endVertex){
-        List<Way> ways = new ArrayList<Way>(getStepsFrom(beginVertex));
-        List<Way> possibleWays = new ArrayList<Way>();
-        for(Way way : ways){
-            List<Way> possibleSteps = getStepsFrom(way.getEndVertex());
-            for(Way possibleStep : possibleSteps){
-                Way actualWay = new Way(way);
-                if(stepIsValid(way, possibleStep, endVertex)){
-                    actualWay.addStep(possibleStep.getEndVertex(), possibleStep.getLength());
-                    possibleWays.add(actualWay);
-                }
-            }
-        }
-        return possibleWays;
-    }
-
-    private boolean stepIsValid(Way actualWay, Way possibleStep, Vertex endVertex){
-        return (!wayContains(actualWay, possibleStep) && stepIsSequence(actualWay, possibleStep))? true : false;
-    }
-
-    private boolean stepIsSequence(Way way, Way possibleStep){
-        return (possibleStep.getBeginVertex().equals(way.endVertex))? true : false;
-    }
-
-    private boolean wayContains(Way way, Way possibleStep){
-        return (way.getWay().contains(possibleStep.getEndVertex().getLabel()))? true : false;
-    }
-
-    private boolean isPreviousStep(Way possibleStep, Way way){
-        return (possibleStep.getEndVertex().getLabel() != way.getWay().get(way.getWay().size()-2))? true : false;
-    }
-
-    private List<Way> getStepsFrom(Vertex actualVertex){
-        List<Way> ways = new ArrayList<Way>();
-        List<Integer> edgeLabel = actualVertex.getNextEdgeLabel();
-        for(int label : edgeLabel){
-            ways.add(newWay(actualVertex, label));
-        }
-        return ways;
-    }
-
-    private Way newWay(Vertex actualVertex, int label){
-        Edge edge = findEdge(label);
-        Vertex nextVertex = findVertex(edge.getNextVertexLabel());
-        return new Way(actualVertex, nextVertex, edge.getLength());
-    }
     
-    private Edge findEdge(int edgeLabel){
-        for(Edge edge : this.edges){
-            if(edge.getLabel() == edgeLabel){
-                return edge;
-            }
-        }
-        return null;
-    }
-    
-    private Vertex findVertex(int vertexLabel){
-        for(Vertex vertex : this.vertices){
-            if(vertex.getLabel() == vertexLabel){
-                return vertex;
-            }
-        }
-        return null;
-    }
-
     private void addVertices(){
         for(Edge edge : this.edges){
             addVerticesFromEdge(edge);
@@ -291,16 +253,32 @@ public class Graph {
         }
     }
 
-    private void separateEdgesByType(){
-        for(Edge edge : this.edges){
-            this.addEdgeByType(edge);
+    private void separateEdgesByTypeOf(List<Edge> edgesList){
+        for(Edge edge : edgesList){
+            addInDirectedEdgesList(new Edge(edge));
+        }
+        for(Edge edge : edgesList){
+            addInNotDirectedEdgesList(new Edge(edge));
+        }
+        removeAditionalDirectedEdges();
+    }
+
+    private void removeAditionalDirectedEdges(){
+        int nonRepetitionNotDirectedEdges = (this.notDirectedEdges.size()) / 2;
+        int size = this.notDirectedEdges.size();
+        for(int i = size - 1; i >= nonRepetitionNotDirectedEdges; i--){
+            this.notDirectedEdges.remove(i);
+        }
+    }
+    
+    private void addInDirectedEdgesList(Edge edge){
+        if(edge.reverseIsInList(this.edges) && !edge.reverseIsInList(this.directedEdges) ){
+            this.notDirectedEdges.add(edge);
         }
     }
 
-    private void addEdgeByType(Edge edge){
-        if(edge.reverseIsInList(this.edges)){
-            this.notDirectedEdges.add(edge);
-        }else if(!edge.reverseIsInList(this.notDirectedEdges)){
+    private void addInNotDirectedEdgesList(Edge edge){
+        if(!edge.reverseIsInList(this.notDirectedEdges)){
             this.directedEdges.add(edge);
         }
     }

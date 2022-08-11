@@ -11,6 +11,12 @@ public class Vertex {
         this.previousEdgeLabel = new ArrayList<Integer>();
         this.nextEdgeLabel = new ArrayList<Integer>();
     }
+
+    public Vertex(String label){
+        this.label = Integer.parseInt(label);
+        this.previousEdgeLabel = new ArrayList<Integer>();
+        this.nextEdgeLabel = new ArrayList<Integer>();
+    }
     
     public boolean equals(Vertex otherVertex){
         if(this.label == otherVertex.getLabel()){
@@ -38,6 +44,15 @@ public class Vertex {
 
     public boolean isLeaf(){
         return (nextEdgeQuantity() + previousEdgeQuantity() == 1)? true : false;    
+    }
+
+    public boolean isInList(List<Vertex> vertices){
+        for(Vertex vertex : vertices){
+            if(this.equals(vertex)){
+                return true;
+            }
+        }
+        return false;
     }
     
     @Override

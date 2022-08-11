@@ -1,14 +1,21 @@
+import java.util.List;
+
 public class AdjacencyMatrix extends Matrix{
 
-    public AdjacencyMatrix(Graph graph){
-        this.matrix = new int[graph.getOrder()][graph.getOrder()];
-        this.preencher(graph);
+    public AdjacencyMatrix(String path){
+        this.matrix = readMatrixFromCsv(path);
     }
 
-    private void preencher(Graph graph){
-        for(Edge edge : graph.getEdges()){
-            this.matrix[edge.getPreviousVertexLabel()][edge.getNextVertexLabel()] = edge.getLength();
+    private int[][] readMatrixFromCsv(String path){
+        String[] file = File.readFile(path).split("\n");
+        return graphFromStrings(file);
+    }
+
+    private int[][] graphFromStrings(String[] strings){
+        for(String str : strings){
+
         }
+        return matrix;
     }
 
     // Getters and Setters:

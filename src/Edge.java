@@ -15,6 +15,14 @@ public class Edge{
         this.arrow = arrow;
     }
 
+    public Edge(Edge edge){
+        this.previousVertex = edge.getPreviousVertex();
+        this.nextVertex = edge.getNextVertex();
+        this.label = edge.getLabel();
+        this.length = edge.getLength();
+        this.arrow = edge.isArrow();
+    }
+
     public Edge(Vertex a, Vertex b){
         this.previousVertex = a;
         this.nextVertex = b;
@@ -56,18 +64,19 @@ public class Edge{
         return (previousVertex == nextVertex)? true : false;
     }
 
-    public Edge Reverse(){
-        return (Edge) new Edge(this.label, this.nextVertex, this.previousVertex);
+    public boolean isInList(List<Edge> edgesList){
+        for(Edge edge : edgesList){
+            if(edge.getLabel() == this.label){
+                return true;
+            }
+        }
+        return false;
     }
     
-    public boolean isReverseWith(Edge otherEdge){
-        return (this.equalsVerifyInvertCase(otherEdge))? true : false;
-    } 
-
     public boolean equals(Edge otherEdge){
-        return (this.equalsVerifyOrderCase(otherEdge))? true : false;
+        return (this.equalsVerifyOrderCase(otherEdge) || this.equalsVerifyInvertCase(otherEdge))? true : false;
     }
-
+    
     private boolean equalsVerifyOrderCase(Edge otherEdge){
         boolean vertex1EqualsOtherVertex1 = this.previousVertex.equals(otherEdge.getPreviousVertex());
         boolean vertex2EqualsOtherVertex2 = this.nextVertex.equals(otherEdge.getNextVertex());
@@ -90,10 +99,18 @@ public class Edge{
         }
         return false;
     }
+    
+    public Edge Reverse(){
+        return (Edge) new Edge(this.label, this.nextVertex, this.previousVertex);
+    }
+    
+    public boolean isReverseWith(Edge otherEdge){
+        return (this.equalsVerifyInvertCase(otherEdge))? true : false;
+    }
 
     @Override
     public String toString(){
-        return Integer.toString(this.label); 
+        return "(" + this.previousVertex.getLabel() + " -> " + this.nextVertex.getLabel() + ")"; 
     }
     
     //GETTERS AND SETTERS:

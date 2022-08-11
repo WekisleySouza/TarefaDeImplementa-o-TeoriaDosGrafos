@@ -1,6 +1,5 @@
 To do:
 
-    - Implementar parte da árvore geradora mínima.
     - Implementar o limite de grau dos vértices em cima da árvore geradora mínima.
     - Implementar matriz de distâncias para achar a menor distância.
     - Implementar conceitos como diametro, raio, etc... Após ter a matriz de distâncias.  
@@ -28,6 +27,7 @@ Doing:
 
 Done:
 
+    - Implementar parte da árvore geradora mínima.
     - Implementar método que retorna passos.
     - Fazer vértices guardarem arestas adjascentes.
     - Verificar se grafo é planar.
